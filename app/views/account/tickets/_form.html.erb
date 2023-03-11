@@ -1,0 +1,20 @@
+<% cancel_path ||= ticket.persisted? ? [:account, ticket] : [:account, @project, :tickets] %>
+
+<%= form_with model: ticket, url: (ticket.persisted? ? [:account, ticket] : [:account, @project, :tickets]), local: true, class: 'form' do |form| %>
+  <%= render "shared/limits/form", form: form, cancel_path: cancel_path do %>
+    <%= render 'account/shared/forms/errors', form: form %>
+
+    <% with_field_settings form: form do %>
+      <%= render 'shared/fields/trix_editor', method: :description, options: {autofocus: true} %>
+      <%= render 'shared/fields/super_select', method: :status, choices: [['open', 'open'], ['building', 'building'], ['testing', 'testing'], ['reopen', 'reopen'], ['resolved', 'resolved'], ['close', 'closed']] %>
+      <%= render 'shared/fields/text_field', method: :comments  %>
+      <%= render 'shared/fields/super_select', method: :user_id, choices: @project.team.users.map { |user| [user.label_string, user.id] } %>
+      <%# 🚅 super scaffolding will insert new fields above this line. %>
+    <% end %>
+
+    <div class="buttons">
+      <%= form.submit (form.object.persisted? ? t('.buttons.update') : t('.buttons.create')), class: "button" %>
+      <%= link_to t('global.buttons.cancel'), cancel_path, class: "button-secondary" %>
+    </div>
+  <% end %>
+<% end %>

@@ -1,0 +1,8 @@
+<% ticket ||= @ticket %>
+<% project ||= @project || ticket&.project %>
+<%= render 'account/projects/breadcrumbs', project: project %>
+<%= render 'account/shared/breadcrumb', label: t('.label'), url: [:account, project, :tickets] %>
+<% if ticket&.persisted? %>
+  <%= render 'account/shared/breadcrumb', label: ticket.label_string, url: [:account, ticket] %>
+<% end %>
+<%= render 'account/shared/breadcrumbs/actions', only_for: 'tickets' %>

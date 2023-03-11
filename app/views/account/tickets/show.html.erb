@@ -1,0 +1,37 @@
+<%= render 'account/shared/page' do |p| %>
+  <% p.content_for :title, t('.section') %>
+  <% p.content_for :body do %>
+    <%= updates_for @ticket do %>
+      <%= render 'account/shared/box', divider: true do |p| %>
+        <% p.content_for :title, t('.header') %>
+        <% p.content_for :description do %>
+          <%= t('.description') %>
+          <%= t('.manage_description') if can? :manage, @ticket %>
+        <% end %>
+
+        <% p.content_for :body do %>
+          <% with_attribute_settings object: @ticket, strategy: :label do %>
+            <%= render 'shared/attributes/html', attribute: :description %>
+            <%= render 'shared/attributes/text', attribute: :status %>
+            <%= render 'shared/attributes/text', attribute: :comments %>
+            <%# 🚅 super scaffolding will insert new fields above this line. %>
+          <% end %>
+        <% end %>
+
+        <% p.content_for :actions do %>
+          <%= link_to t('.buttons.edit'), [:edit, :account, @ticket], class: first_button_primary if can? :edit, @ticket %>
+          <%# 🚅 super scaffolding will insert new action model buttons above this line. %>
+          <%= button_to t('.buttons.destroy'), [:account, @ticket], method: :delete, class: first_button_primary, data: { confirm: t('.buttons.confirmations.destroy', model_locales(@ticket)) } if can? :destroy, @ticket %>
+          <%= link_to t('global.buttons.back'), [:account, @project, :tickets], class: first_button_primary %>
+        <% end %>
+    
+
+        <% p.content_for :raw_footer do %>
+          <%# 🚅 super scaffolding will insert new action model index views above this line. %>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <%# 🚅 super scaffolding will insert new children above this line. %>
+  <% end %>
+<% end %>

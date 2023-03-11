@@ -1,0 +1,67 @@
+<% tickets = tickets.accessible_by(current_ability) %>
+<% project = @project || @project %>
+<% context ||= project %>
+<% collection ||= :tickets %>
+<% hide_actions ||= false %>
+<% hide_back ||= false %>
+
+<% pagy ||= nil %>
+<% pagy, tickets = pagy(tickets, page_param: :tickets_page) unless pagy %>
+
+<%= action_model_select_controller do %>
+  <% updates_for context, collection do %>
+    <%= render 'account/shared/box', pagy: pagy do |p| %>
+      <% p.content_for :title, t(".contexts.#{context.class.name.underscore}.header") %>
+      <% p.content_for :description do %>
+        <%= t(".contexts.#{context.class.name.underscore}.description#{"_empty" unless tickets.any?}") %>
+        <%= render "shared/limits/index", model: tickets.model %>
+      <% end %>
+
+      <% p.content_for :table do %>
+        <% if tickets.any? %>
+          <table class="table">
+            <thead>
+              <tr>
+                <%= render "shared/tables/select_all" %>
+                <%# 🚅 super scaffolding will insert new field headers above this line. %>
+                <th><%= t('.fields.description.heading') %></th>
+                <th><%= t('.fields.status.heading') %></th>
+                <th><%= t('.fields.comments.heading') %></th>
+                <th><%= t('.fields.user_id.heading') %></th>
+                <th><%= t('.fields.created_at.heading') %></th>
+                <th class="text-right"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <% tickets.each do |ticket| %>
+                <%= render 'account/tickets/ticket', ticket: ticket %>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
+      <% end %>
+
+      <% p.content_for :actions do %>
+        <% unless hide_actions %>
+          <% if context == project %>
+            <% if can? :create, Ticket.new(project: project) %>
+              <%= link_to t('.buttons.new'), [:new, :account, project, :ticket], class: "#{first_button_primary(:ticket)} new" %>
+            <% end %>
+          <% end %>
+
+          <%# 🚅 super scaffolding will insert new targets one parent action model buttons above this line. %>
+          <%# 🚅 super scaffolding will insert new bulk action model buttons above this line. %>
+          <%= render "shared/bulk_action_select" %>
+
+          <% unless hide_back %>
+            <%= link_to t('global.buttons.back'), [:account, context], class: "#{first_button_primary(:ticket)} back" %>
+          <% end %>
+        <% end %>
+      <% end %>
+
+      <% p.content_for :raw_footer do %>
+        <%# 🚅 super scaffolding will insert new action model index views above this line. %>
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
