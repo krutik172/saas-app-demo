@@ -86,6 +86,7 @@ en:
       created: Project was successfully created.
       updated: Project was successfully updated.
       destroyed: Project was successfully destroyed.
+      plans: Purchase plan for more projects
   account:
     projects: *projects
   activerecord:

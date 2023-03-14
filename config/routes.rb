@@ -33,7 +33,7 @@ Rails.application.routes.draw do
     # 🚅 super scaffolding will insert new api versions above this line.
   end
 
-  namespace :account, defaults: { subdomain: 'app' } do
+  namespace :account do
     shallow do
       # user-level onboarding tasks.
       namespace :onboarding do
@@ -71,7 +71,7 @@ Rails.application.routes.draw do
           # 🚅 super scaffolding will insert new integration installations above this line.
         end
 
-        resources :projects, defaults: { subdomain: 'project' } do
+        resources :projects do
           resources :goals
           resources :tickets
         end

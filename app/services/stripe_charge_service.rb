@@ -1,12 +1,9 @@
 class StripeChargeService
     DEFAULT_CURRENCY = 'usd'.freeze
     
-    def initialize(params, user, product, view_context)
-      @stripe_token = params[:stripe_token]
-      @stripe_email = params[:stripe_email]
-      @product = product
-      @amount = params[:price]
+    def initialize(user, subscription, view_context)
       @user = user
+      @subscription = subscription
       @view_context = view_context
     end
   
@@ -16,55 +13,65 @@ class StripeChargeService
   
     private
   
-    attr_accessor :user, :amount, :stripe_token, :product, :view_context
+    attr_accessor :name, :description, :email, :subscription, :view_context
   
     def find_customer
-      if user.stripe_token
-        retrieve_customer(user.stripe_token)
+      if subscription.stripe_customer_id.present?
+        # load stripe subscription and update customer plan
+        retrieve_customer(subscription.stripe_customer_id)
       else
+        # if no stripe customer id is found on subscription, then create new stripe subscription
         create_customer
       end
     end
   
-    def retrieve_customer(stripe_token)
-      Stripe::Customer.retrieve(stripe_token) 
+    def retrieve_customer(stripe_customer_id)
+      account = Stripe::Customer.retrieve(stripe_customer_id)
     end
   
     def create_customer
       customer = Stripe::Customer.create(
-        source: stripe_token
+        name: @user.full_name,
+        email: @user.email,
+        description: "Customer id: #{@user.id}",
       )
-      user.update(stripe_token: customer.id)
+      subscription.update(stripe_customer_id: customer.id)
       customer
     end
   
     def create_charge(customer)
-      if customer.default_source.nil?
-        session = Stripe::Checkout::Session.create(
-          customer: customer,
-          payment_method_types: ['card'],
-          line_items: [{
-              name: product.product_name,
-              amount: product.price.to_i,
-              currency: 'usd',
-              quantity: 1
-          }],
-          mode: 'payment',
-          success_url: view_context.product_url(product),
-          cancel_url:  view_context.product_url(product)
-          )
-      else
-        Stripe::Charge.create(
-          customer: customer.id,
-          amount: order_amount,
-          description: customer.email,
-          currency: DEFAULT_CURRENCY
-        )
-      end
+      payment_method = Stripe::PaymentMethod.create({
+        type: "card",
+        card: {
+          number: "4242424242424242",
+          exp_month: 12,
+          exp_year: 2024,
+          cvc: "123",
+        },
+      })
+      payment_method.attach(customer: customer.id)
+      customer.invoice_settings.default_payment_method = payment_method.id
+      customer.save
+      subs = Stripe::Subscription.create({
+        customer: customer.id,
+        items: [
+          {
+            price: "price_1Ml7wVSA7mfSJAFlCUspJjPD",
+          },
+        ],
+      })
+      session = Stripe::Checkout::Session.create(
+        customer: customer,
+        payment_method_types: ['card'],
+        line_items: [{
+          price: 'price_1Ml7wVSA7mfSJAFlCUspJjPD',
+          quantity: 1,
+        }],
+        mode: 'subscription',
+        success_url:  view_context.account_teams_url + '?session_id={CHECKOUT_SESSION_ID}',
+        cancel_url: view_context.account_teams_url
+      )
+      subscription.update(plan: "premium", stripe_subscription_id: subs.id)
       session
-    end
-  
-    def order_amount
-      Product.find_by(id: product).price
     end
   end

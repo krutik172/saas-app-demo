@@ -1,69 +1,36 @@
-<div class="container">
-  <div class="card-deck mb-3 text-center">
-    <div class="card mb-4 shadow-sm">
-      <div class="card-header">
-        <h4 class="my-0 font-weight-normal">Free</h4>
+<% unless current_user.subscription.plan.eql? "premium"  %>
+  <div class="container">
+    <div class="card-deck mb-3 text-center">
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+          <h1 class="my-0 font-weight-normal">Free</h1>
+        </div>
+        <div class="card-body">
+          <h1 class="card-title pricing-card-title">INR 0 <small class="text-muted">/ mo</small></h1>
+          <ul class="list-unstyled mt-3 mb-4">
+            <li>Can create 2 projects</li>
+            <li>Join 2 teams</li>
+            <li class="text-muted"><del>No multiple teams</del></li>
+            <li class="text-muted"><del>No more projects access</del></li>
+          </ul>
+        </div>
       </div>
-      <div class="card-body">
-        <h1 class="card-title pricing-card-title">$0 <small class="text-muted">/ mo</small></h1>
-        <ul class="list-unstyled mt-3 mb-4">
-          <li>1 job per month</li>
-          <li>Job visible for 7 days</li>
-          <li class="text-muted"><del>No email support</del></li>
-          <li class="text-muted"><del>No help center access</del></li>
-        </ul>
-        <button data-plan="free" type="button" class="btn btn-block btn-outline-primary">Sign up for free</button>
-        
+      <div class="card mb-4 shadow-sm">
+        <div class="card-header">
+          <h1 class="my-0 font-weight-normal">Premium</h1>
+        </div>
+        <div class="card-body">
+          <h1 class="card-title pricing-card-title">INR 500 <small class="text-muted">/ mo</small></h1>
+          <ul class="list-unstyled mt-3 mb-4">
+            <li>Multiple projects</li>
+            <li>Multiple teams join</li>
+          </ul>
+          <%= button_to 'Buy Now', account_user_choose_plan_path, class: 'button new', data: { turbo: false }%>
+        </div>
       </div>
-    </div>
-    <div class="card mb-4 shadow-sm">
-      <div class="card-header">
-        <h4 class="my-0 font-weight-normal">Small</h4>
-      </div>
-      <div class="card-body">
-        <h1 class="card-title pricing-card-title">$9<small>.99</small> <small class="text-muted">/ mo</small></h1>
-        <ul class="list-unstyled mt-3 mb-4">
-          <li>3 jobs per month</li>
-          <li>Jobs visible for 30 days</li>
-          <li>Priority email support</li>
-          <li>Help center access</li>
-        </ul>
-        <button data-plan="small" type="button" class="btn btn-block btn-success">Choose Plan</button>
-         <%= button_to 'Buy Now', account_user_choose_plan_path(plan: 'small'), class: 'btn btn-primary' %>
-      </div>
-    </div>
-    <div class="card mb-4 shadow-sm">
-      <div class="card-header">
-        <h4 class="my-0 font-weight-normal">Medium</h4>
-      </div>
-      <div class="card-body">
-        <h1 class="card-title pricing-card-title">$19<small>.99</small> <small class="text-muted">/ mo</small></h1>
-        <ul class="list-unstyled mt-3 mb-4">
-          <li>9 jobs per month</li>
-          <li>Jobs visible for 30 days</li>
-          <li>Phone and email support</li>
-          <li>Help center access</li>
-        </ul>
-        <button data-plan="medium" type="button" class="btn btn-block btn-success">Choose Plan</button>
-      </div>
-    </div>
-    <div class="card mb-4 shadow-sm">
-      <div class="card-header">
-        <h4 class="my-0 font-weight-normal">Large</h4>
-      </div>
-      <div class="card-body">
-        <h1 class="card-title pricing-card-title">$29<small>.99</small> <small class="text-muted">/ mo</small></h1>
-        <ul class="list-unstyled mt-3 mb-4">
-          <li>Unlimited jobs per month</li>
-          <li>Jobs visible for 30 days</li>
-          <li>Phone and email support</li>
-          <li>Help center access</li>
-        </ul>
-        <button data-plan="large" type="button" class="btn btn-block btn-success">Choose Plan</button>
-      </div>
-    </div>
-  </div>
 
-  <%= form_tag account_user_choose_plan_path, id: "subscribe_to_plan" do %>
-    <%= hidden_field_tag "plan", "free" %>
-  <% end %>
+    </div>
+<% else %>
+  <h1>Congrats! You have premium membership to access unlimited projects</h1>
+<%end %>
+

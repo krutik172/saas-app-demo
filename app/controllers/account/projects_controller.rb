@@ -26,12 +26,16 @@ class Account::ProjectsController < Account::ApplicationController
   # POST /account/teams/:team_id/projects.json
   def create
     respond_to do |format|
-      if @project.save
-        format.html { redirect_to [:account, @project], notice: I18n.t("projects.notifications.created") }
-        format.json { render :show, status: :created, location: [:account, @project] }
+      unless current_user.subscription.plan.eql? "premium"
+        format.html { redirect_to new_account_team_project_path ,notice: I18n.t("projects.notifications.plans") }
       else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @project.errors, status: :unprocessable_entity }
+        if @project.save
+          format.html { redirect_to [:account, @project], notice: I18n.t("projects.notifications.created") }
+          format.json { render :show, status: :created, location: [:account, @project] }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+          format.json { render json: @project.errors, status: :unprocessable_entity }
+        end
       end
     end
   end

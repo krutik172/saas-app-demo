@@ -1,0 +1,8 @@
+en:
+  plans: &plans
+    label: &label Subscribe
+    breadcrumbs:
+      label: *label
+    navigation:
+      label: *label
+      icon: fal fa-puzzle-piece ti ti-gift

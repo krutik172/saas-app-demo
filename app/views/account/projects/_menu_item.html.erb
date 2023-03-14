@@ -8,3 +8,11 @@
     <% end %>
   <% end %>
 <% end %>
+ <%= render 'account/shared/menu/item', {
+   url: main_app.polymorphic_path([:account, current_user, :plans]),
+   label: t('plans.navigation.label'),
+   } do |p| %>
+   <% p.content_for :icon do %>
+      <i class="<%= t('plans.navigation.icon') %>"></i>
+    <% end %>
+     <% end %>

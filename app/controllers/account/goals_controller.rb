@@ -40,7 +40,7 @@ class Account::GoalsController < Account::ApplicationController
   def update
     respond_to do |format|
       if @goal.update(goal_params)
-        format.html { redirect_to [:account, @goal], notice: I18n.t("goals.notifications.updated") }
+        format.html { redirect_to [:account, @goal], notice: I18n.t("goals.notifications.updated")  }
         format.json { render :show, status: :ok, location: [:account, @goal] }
       else
         format.html { render :edit, status: :unprocessable_entity }
