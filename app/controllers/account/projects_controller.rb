@@ -26,8 +26,8 @@ class Account::ProjectsController < Account::ApplicationController
   # POST /account/teams/:team_id/projects.json
   def create
     respond_to do |format|
-      if current_user.current_team.projects.count == 2
-        format.html { redirect_to new_account_team_project_path ,notice: I18n.t("projects.notifications.plans") }
+      if current_user.current_team.projects.count >= 2 && current_user.subscription.plan != "premium"
+        format.html { redirect_to new_account_team_project_path ,notice: I18n.t("projects.notifications.plans") } 
       else
         @project.company = @current_company
         if @project.save
