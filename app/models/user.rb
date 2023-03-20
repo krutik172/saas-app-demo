@@ -1,7 +1,9 @@
 class User < ApplicationRecord
   include Users::Base
   include Roles::User
+  
   has_one :subscription
+  belongs_to :company, optional: true
   has_many :tickets, dependent: :destroy
 
   after_create :setup_subscription

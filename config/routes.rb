@@ -32,51 +32,54 @@ Rails.application.routes.draw do
     draw "api/v1"
     # 🚅 super scaffolding will insert new api versions above this line.
   end
-
-  namespace :account do
-    shallow do
-      # user-level onboarding tasks.
-      namespace :onboarding do
-        # routes for standard onboarding steps are configured in the `bullet_train` gem, but you can add more here.
-      end
-
-      # user specific resources.
-      resources :users, extending do
-        namespace :oauth do
-          # 🚅 super scaffolding will insert new oauth providers above this line.
+  
+  constraints(subdomain: /[a-z0-9]+/) do
+    namespace :account do
+      shallow do
+        # user-level onboarding tasks.
+        namespace :onboarding do
+          # routes for standard onboarding steps are configured in the `bullet_train` gem, but you can add more here.
         end
-        get "/plans" => "users#plans"
-        post "plan/subscribe" => "subscriptions#choose_plan", as: :choose_plan
-      
-        get "subscription/success" => "subscriptions#stripe_success", as: :stripe_success
-        get "subscription/cancel" => "subscriptions#stripe_cancel", as: :stripe_cancel
-        # routes for standard user actions and resources are configured in the `bullet_train` gem, but you can add more here.
-      end
-
-      # team-level resources.
-      resources :teams, extending do
-        # routes for many teams actions and resources are configured in the `bullet_train` gem, but you can add more here.
-
-        # add your resources here.
-
-        resources :invitations, extending do
-          # routes for standard invitation actions and resources are configured in the `bullet_train` gem, but you can add more here.
+        resources :companies
+        
+        # user specific resources.
+        resources :users, extending do
+          namespace :oauth do
+            # 🚅 super scaffolding will insert new oauth providers above this line.
+          end
+          get "/plans" => "users#plans"
+          post "plan/subscribe" => "subscriptions#choose_plan", as: :choose_plan
+        
+          get "subscription/success" => "subscriptions#stripe_success", as: :stripe_success
+          get "subscription/cancel" => "subscriptions#stripe_cancel", as: :stripe_cancel
+          # routes for standard user actions and resources are configured in the `bullet_train` gem, but you can add more here.
         end
 
-        resources :memberships, extending do
-          # routes for standard membership actions and resources are configured in the `bullet_train` gem, but you can add more here.
-        end
+        # team-level resources.
+        resources :teams, extending do
+          # routes for many teams actions and resources are configured in the `bullet_train` gem, but you can add more here.
 
-        namespace :integrations do
-          # 🚅 super scaffolding will insert new integration installations above this line.
-        end
+          # add your resources here.
 
-        resources :projects do
-          resources :goals
-          resources :tickets
-        end
+          resources :invitations, extending do
+            # routes for standard invitation actions and resources are configured in the `bullet_train` gem, but you can add more here.
+          end
 
-        resources :payments
+          resources :memberships, extending do
+            # routes for standard membership actions and resources are configured in the `bullet_train` gem, but you can add more here.
+          end
+
+          namespace :integrations do
+            # 🚅 super scaffolding will insert new integration installations above this line.
+          end
+
+          resources :projects do
+            resources :goals
+            resources :tickets
+          end
+
+          resources :payments
+        end
       end
     end
   end

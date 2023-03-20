@@ -26,9 +26,10 @@ class Account::ProjectsController < Account::ApplicationController
   # POST /account/teams/:team_id/projects.json
   def create
     respond_to do |format|
-      unless current_user.subscription.plan.eql? "premium"
+      if current_user.current_team.projects.count == 2
         format.html { redirect_to new_account_team_project_path ,notice: I18n.t("projects.notifications.plans") }
       else
+        @project.company = @current_company
         if @project.save
           format.html { redirect_to [:account, @project], notice: I18n.t("projects.notifications.created") }
           format.json { render :show, status: :created, location: [:account, @project] }
@@ -44,6 +45,7 @@ class Account::ProjectsController < Account::ApplicationController
   # PATCH/PUT /account/projects/:id.json
   def update
     respond_to do |format|
+      @project.company = @current_company
       if @project.update(project_params)
         format.html { redirect_to [:account, @project], notice: I18n.t("projects.notifications.updated") }
         format.json { render :show, status: :ok, location: [:account, @project] }

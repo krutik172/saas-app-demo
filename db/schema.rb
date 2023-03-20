@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_11_071242) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_16_101313) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -61,6 +61,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_071242) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "companies", force: :cascade do |t|
+    t.string "name"
+    t.string "email"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "subdomain"
+  end
+
   create_table "goals", force: :cascade do |t|
     t.bigint "project_id", null: false
     t.string "description"
@@ -103,7 +111,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_071242) do
     t.bigint "platform_agent_of_id"
     t.jsonb "role_ids", default: []
     t.boolean "platform_agent", default: false
+    t.bigint "company_id"
     t.index ["added_by_id"], name: "index_memberships_on_added_by_id"
+    t.index ["company_id"], name: "index_memberships_on_company_id"
     t.index ["invitation_id"], name: "index_memberships_on_invitation_id"
     t.index ["platform_agent_of_id"], name: "index_memberships_on_platform_agent_of_id"
     t.index ["team_id"], name: "index_memberships_on_team_id"
@@ -190,7 +200,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_071242) do
     t.datetime "updated_at", null: false
     t.text "description"
     t.date "expected_completion_date"
-    t.index ["team_id"], name: "index_projects_on_teaadd_column :subscriptions, :stripe_subscription_id, :stringm_id"
+    t.bigint "company_id"
+    t.index ["company_id"], name: "index_projects_on_company_id"
+    t.index ["team_id"], name: "index_projects_on_team_id"
   end
 
   create_table "scaffolding_absolutely_abstract_creative_concepts", force: :cascade do |t|
@@ -265,6 +277,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_071242) do
     t.boolean "being_destroyed"
     t.string "time_zone"
     t.string "locale"
+    t.bigint "company_id"
+    t.index ["company_id"], name: "index_teams_on_company_id"
   end
 
   create_table "tickets", force: :cascade do |t|
@@ -311,6 +325,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_071242) do
     t.bigint "platform_agent_of_id"
     t.string "otp_secret"
     t.string "plan"
+    t.bigint "company_id"
+    t.index ["company_id"], name: "index_users_on_company_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["platform_agent_of_id"], name: "index_users_on_platform_agent_of_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
@@ -387,6 +403,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_071242) do
   add_foreign_key "integrations_stripe_installations", "oauth_stripe_accounts"
   add_foreign_key "integrations_stripe_installations", "teams"
   add_foreign_key "invitations", "teams"
+  add_foreign_key "memberships", "companies"
   add_foreign_key "memberships", "invitations"
   add_foreign_key "memberships", "memberships", column: "added_by_id"
   add_foreign_key "memberships", "oauth_applications", column: "platform_agent_of_id"
@@ -399,6 +416,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_071242) do
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_applications", "teams"
   add_foreign_key "oauth_stripe_accounts", "users"
+  add_foreign_key "projects", "companies"
   add_foreign_key "projects", "teams"
   add_foreign_key "scaffolding_absolutely_abstract_creative_concepts", "teams"
   add_foreign_key "scaffolding_absolutely_abstract_creative_concepts_collaborators", "memberships"
@@ -407,8 +425,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_11_071242) do
   add_foreign_key "scaffolding_completely_concrete_tangible_things_assignments", "memberships"
   add_foreign_key "scaffolding_completely_concrete_tangible_things_assignments", "scaffolding_completely_concrete_tangible_things", column: "tangible_thing_id"
   add_foreign_key "subscriptions", "users"
+  add_foreign_key "teams", "companies"
   add_foreign_key "tickets", "projects"
   add_foreign_key "tickets", "users"
+  add_foreign_key "users", "companies"
   add_foreign_key "users", "oauth_applications", column: "platform_agent_of_id"
   add_foreign_key "webhooks_outgoing_endpoints", "scaffolding_absolutely_abstract_creative_concepts"
   add_foreign_key "webhooks_outgoing_endpoints", "teams"

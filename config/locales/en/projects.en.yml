@@ -87,6 +87,9 @@ en:
       updated: Project was successfully updated.
       destroyed: Project was successfully destroyed.
       plans: Purchase plan for more projects
+      plans_for_teams: Purchase plan for more teams
+      plans_successful: Purchase successful
+      plans_unsuccessful: Purchase unsuccessful
   account:
     projects: *projects
   activerecord:

@@ -101,6 +101,20 @@ Rails.application.configure do
   # configuration right now, i'm making them the default here as well.
   config.action_mailbox.ingress = :mailgun
 
+  config.hosts << "lvh.me"
+  Rails.application.configure do
+    config.hosts.clear
+  end
+
+  Rails.application.routes.default_url_options[:host] = 'lvh.me'
+
+  config.after_initialize do
+    Rails.application.routes.default_url_options[:host] = Proc.new do |req|
+      subdomain = req.subdomain.present? ? "#{req.subdomain}." : ""
+      "#{subdomain}myapp.com"
+    end
+  end
+  
   # ✅ YOUR APPLICATION'S CONFIGURATION
   # If you need to customize your application's configuration, this is the place to do it. This helps avoid merge
   # conflicts in the future when Rails or Bullet Train update their own default settings.

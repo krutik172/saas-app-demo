@@ -1,5 +1,8 @@
 class Membership < ApplicationRecord
   include Memberships::Base
+  belongs_to :user
+  belongs_to :company, optional: true
+
   # 🚅 add concerns above.
 
   # 🚅 add belongs_to associations above.

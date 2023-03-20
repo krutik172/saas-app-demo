@@ -1,9 +1,8 @@
 class Project < ApplicationRecord
   # 🚅 add concerns above.
-
   # 🚅 add attribute accessors above.
-
   belongs_to :team
+  belongs_to :company, optional: true
   # 🚅 add belongs_to associations above.
 
   has_many :goals, dependent: :destroy

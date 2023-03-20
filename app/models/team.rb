@@ -1,10 +1,8 @@
 class Team < ApplicationRecord
   include Teams::Base
   include Webhooks::Outgoing::TeamSupport
-  # 🚅 add concerns above.
-
-  # 🚅 add belongs_to associations above.
-
+  # acts_as_tenant :company
+  belongs_to :company, optional: true
   has_many :projects, dependent: :destroy
   # 🚅 add has_many associations above.
 

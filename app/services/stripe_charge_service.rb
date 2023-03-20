@@ -52,14 +52,6 @@ class StripeChargeService
       payment_method.attach(customer: customer.id)
       customer.invoice_settings.default_payment_method = payment_method.id
       customer.save
-      subs = Stripe::Subscription.create({
-        customer: customer.id,
-        items: [
-          {
-            price: "price_1Ml7wVSA7mfSJAFlCUspJjPD",
-          },
-        ],
-      })
       session = Stripe::Checkout::Session.create(
         customer: customer,
         payment_method_types: ['card'],
@@ -68,10 +60,19 @@ class StripeChargeService
           quantity: 1,
         }],
         mode: 'subscription',
-        success_url:  view_context.account_teams_url + '?session_id={CHECKOUT_SESSION_ID}',
-        cancel_url: view_context.account_teams_url
+        success_url:  view_context.account_user_stripe_success_url,
+        cancel_url: view_context.account_user_stripe_cancel_url
       )
-      subscription.update(plan: "premium", stripe_subscription_id: subs.id)
+      subs = Stripe::Subscription.create({
+        customer: customer.id,
+        items: [
+          {
+            price: "price_1Ml7wVSA7mfSJAFlCUspJjPD",
+          },
+        ],
+        expand: ['latest_invoice.payment_intent']
+      })
+      subscription.update(stripe_subscription_id: subs.id)
       session
     end
   end

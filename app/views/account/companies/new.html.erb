@@ -1,0 +1,18 @@
+<%= form_with model: @company, url: (account_companies_path), local: true, class: 'form' do |form| %>
+  
+    <%= render 'account/shared/forms/errors', form: form %>
+
+    <% with_field_settings form: form do %>
+    <label class="block" for="company_name">Company Name</label>
+    <input autofocus="autofocus" id="company_name" class=" block w-full rounded-md shadow-sm font-light text-sm dark:bg-slate-800 dark:text-slate-300 focus:ring-primary-500 focus:border-primary-500 border-slate-300 dark:border-slate-900" type="text" name="company[name]", data: { turbo: false }>
+    <label class="block" for="company_email">Company Email</label>
+    <input id="company_email" class=" block w-full rounded-md shadow-sm font-light text-sm dark:bg-slate-800 dark:text-slate-300 focus:ring-primary-500 focus:border-primary-500 border-slate-300 dark:border-slate-900" type="email" name="company[email]", data: { turbo: false }>
+      <%# 🚅 super scaffolding will insert new fields above this line. %>
+    <% end %>
+
+   <div class="buttons">
+      <%= form.submit class: "button", data: { turbo: false } %>
+      <a class="button-secondary" href="/account/teams/bJYLew/projects">Cancel</a>
+    </div>
+  
+<% end %>
