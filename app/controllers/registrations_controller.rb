@@ -3,7 +3,7 @@ class RegistrationsController < Devise::RegistrationsController
         @user = User.new(user_params)
         if @user.save
             sign_in(@user)
-            redirect_to account_teams_url(subdomain: current_user.company.subdomain)
+            redirect_to account_teams_url(subdomain: current_user.company.subdomain) if current_user.company.present?
         else
             render :new
         end
